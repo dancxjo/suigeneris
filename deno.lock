@@ -1,0 +1,33 @@
+{
+  "version": "3",
+  "packages": {
+    "specifiers": {
+      "jsr:@epi/ollama": "jsr:@epi/ollama@0.0.7",
+      "npm:ollama": "npm:ollama@0.5.6"
+    },
+    "jsr": {
+      "@epi/ollama@0.0.7": {
+        "integrity": "4998971d4187b84e3b9ef41d21413b02605af271ca4f1947750be1922768344c"
+      }
+    },
+    "npm": {
+      "ollama@0.5.6": {
+        "integrity": "sha512-4BySAMt96+OCt4emL6DE78UBCGqC7GvteM9LRCd6WwJyefn0x9w2BrcUcLm9nJ9bYpRsmkhf0Au18Q5MhsA14w==",
+        "dependencies": {
+          "whatwg-fetch": "whatwg-fetch@3.6.20"
+        }
+      },
+      "whatwg-fetch@3.6.20": {
+        "integrity": "sha512-EqhiFU6daOA8kpjOWTL0olhVOF3i7OrFzSYiGsEMB8GcXS+RrzauAERX65xMeNWVqxA6HXH2m69Z9LaKKdisfg==",
+        "dependencies": {}
+      }
+    }
+  },
+  "remote": {},
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/assert@1",
+      "jsr:@std/os@1"
+    ]
+  }
+}
