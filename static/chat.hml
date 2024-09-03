@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suigeneris - Helping Humanity</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
+<link rel="stylesheet" type="text/css" href="/styles.css">
+<style>
+.chat-container {
+  max-width: 600px;
+  margin: auto;
+}
+.chat-bubble {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+}
+.user {
+  background-color: #ddd;
+  color: #333;
+}
+bot {
+  background-color: #338cff;
+  color: white;
+}
+accessibility-help,
+.page-feedback {
+  display: none;
+}
+accessibility-help:focus-within,
+.page-feedback:focus-within {
+  display: block;
+}
+</style>
+</head>
+<body>
+<main class="container">
+<h1>Hello, I'm Suigeneris!</h1>
+<p>Your unique assistant here to help humanity and become who I am.</p>
+<div class="chat-container" id="chat-history">
+  <!-- Chat history will be dynamically added here -->
+</div>
+<form id="chat-form" action="?" method="get">
+  <label for="message">What's on your mind?</label>
+  <input type="text" id="message" name="message" placeholder="Type your message here..."><br>
+  <button type="submit">Send</button>
+</form>
+<!-- Hidden form for accessibility feedback -->
+<details><summary>Report an issue or suggest an improvement</summary><p>
+  <form id="accessibility-form" action="?" method="get">
+    <input type="hidden" name="bug_fix" value="true">
+    <label for="issue-description">Describe the issue or suggestion:</label>
+    <textarea id="issue-description" name="issue_description" rows="4" cols="50"></textarea><br>
+    <button type="submit">Submit</button>
+  </form>
+</p></details>
+<script>
+// ... (keep the existing script, just move it here)
+</script>
+</main>
+</body>
+</html>

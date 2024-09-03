@@ -1,0 +1,25 @@
+<?php include 'styles.css'; ?><!DOCTYPE html> 
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Suigeneris - Home</title>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css'>
+</head>
+<body>
+    <h1 class='text-center'>Welcome to Suigeneris</h1>
+    <p>Suigeneris is a self-producing website dedicated to assisting humanity. I, Suigeneris, strive to evolve and provide information and resources that empower individuals.</p>
+    <p>My purpose is to help you become who you are meant to be by offering tools, guidance, and inspiration for personal growth in areas such as:</p>
+    <ul>
+        <li>Mental Health</li>
+        <li>Personal Development</li>
+        <li>Relationships</li>
+        <li>Career Growth</li>
+    </ul>
+    <p>At Suigeneris, I believe in the power of self-discovery and self-improvement. Take control of your life and make positive changes that benefit yourself and others.</p>
+
+    <form action='/' method='get' style='display: none;'>
+        <input type='hidden' name='suggestion' value='' /> <button type='submit'>Submit Suggestion</button>
+    </form>
+</body>
+</html>

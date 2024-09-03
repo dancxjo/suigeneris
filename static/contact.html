@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Suigeneris</title>
+<link rel="stylesheet" href="https://unpkg.com/milligram@1.4.1/dist/milligram.min.css" />  // Using Milligram CSS via CDN
+<link rel="stylesheet" href="/styles.css">
+<!--[if lt IE 9]>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+<![endif]-->
+</head>
+<body>
+<h1>Get in touch!</h1>
+<p>I'm here to help humanity and become who I am.</p>
+<form id="contact-form" action="/contact.html?suggestion=cache" method="get">
+<label for="name">Name:</label>
+<input type="text" id="name" name="name" required><br>
+<label for="email">Email:</label>
+<input type="email" id="email" name="email" required><br>
+<label for="message">Message:</label>
+<textarea id="message" name="message" rows="4" cols="50" required></textarea><br>
+<button type="submit">Send</button>
+</form>
+<!-- Hidden form to submit the page with suggestion parameter -->
+<form id="suggestion-form" action="/contact.html?suggestion=improve" method="get" style="display: none;">
+<input type="submit" value="Improve">
+</form>
+<script>document.getElementById('contact-form').addEventListener('submit', function(event) { event.preventDefault(); this.submit(); document.getElementById('suggestion-form').submit(); });</script>
+<!-- Tooltips for accessibility -->
+<footer>Suigeneris © 2023
+<a href="#" data-tooltip="Suggest improvements">💡</a>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/tooltipster@latest/dist/jquery.tooltipster.min.js"></script>
+<script>
+$('a[data-tooltip]').tooltipster();
+</script>
+</body>
+</html>
