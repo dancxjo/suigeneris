@@ -10,11 +10,8 @@ const model = 'mxbai-embed-large';
 // Initialize Qdrant client
 const client = new QdrantClient({ url: 'http://qdrant:6333' });
 
-// Directory to scan for files
-const directoryPath = '.';
-
 // Define the maximum chunk size (in characters)
-const maxChunkSize = 2048; // For example, 1000 characters per chunk
+const maxChunkSize = 256;
 
 let globalIndex = 1; // Global counter for unique integer IDs
 
@@ -39,7 +36,7 @@ async function processFile(filePath: string) {
         fileStream = await Deno.open(filePath, { read: true });
         const readableStream = fileStream.readable;
         const reader = readableStream.getReader();
-        let decoder = new TextDecoder();
+        const decoder = new TextDecoder();
         let chunkBuffer = '';
         let chunkIndex = 0;
 
@@ -103,7 +100,7 @@ export async function embed(chunk: string, filePath: string, chunkIndex: number)
 async function ensureCollectionExists(collectionName: string, vectorSize: number) {
     try {
         await client.getCollection(collectionName);
-        console.log(`Collection '${collectionName}' already exists.`);
+        // console.log(`Collection '${collectionName}' already exists.`);
     } catch (error) {
         if (error?.status === 404) {
             // Create the collection if it does not exist
@@ -113,7 +110,7 @@ async function ensureCollectionExists(collectionName: string, vectorSize: number
                     distance: 'Cosine', // Choose a distance metric like Cosine, Euclidean, etc.
                 },
             });
-            console.log(`Created collection '${collectionName}' in Qdrant.`);
+            // console.log(`Created collection '${collectionName}' in Qdrant.`);
         } else {
             throw error; // If it's another error, rethrow it
         }
@@ -197,4 +194,4 @@ export async function replenish() {
     return processFiles().catch(console.error);
 }
 
-replenish();
+await replenish();
