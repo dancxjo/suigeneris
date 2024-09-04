@@ -1,7 +1,7 @@
 import { Ollama } from 'npm:ollama';
 import { seek } from "./embed.ts";
 const ollama = new Ollama({ host: '192.168.0.7' });
-const model = 'mistral-nemo:12b-instruct-2407-q8_0';
+let model = 'mistral-nemo:12b-instruct-2407-q8_0';
 // const model = 'llama3.1';
 // const model = 'openchat';
 // const model = 'mistral-nemo'
