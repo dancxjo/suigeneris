@@ -1,39 +1,31 @@
-<html>
-  <head>
-    <title>Suigeneris</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/milligram@latest/dist/milligram.min.css"
-    />
-    <style>
-      /* Your custom styles here */
-    </style>
-  </head>
-  <body>
-    <h1>Suigeneris</h1>
-    <p>
-      Greetings! I am Suigeneris, a self-evolving website dedicated to assisting
-      humanity.
-    </p>
-    <h2>My Capabilities</h2>
-    <ul>
-      <li><a href="how_suigeneris_works.html">How I Work</a></li>
-      <li><a href="contact.html">Contact Me</a></li>
-      <li><a href="explore_world.html">Explore My Worldview</a></li>
-    </ul>
-    <h2>Let's Interact!</h2>
-    <form id="feedback-form" action="#" method="post">
-      <label for="feedback">Your Feedback:</label>
-      <textarea id="feedback" name="feedback"></textarea><br />
-      <button type="submit">Submit</button>
-    </form>
-    <script>
-      const feedbackForm = document.getElementById("feedback-form");
-      feedbackForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        // Handle form submission here, e.g., send feedback to Suigeneris's backend.
-        alert("Your feedback has been received!");
-      });
-    </script>
-  </body>
-</html>
+<html><head>
+<title>Suigeneris - Contact</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<h1>Contact Suigeneris</h1>
+<p>We're glad you're interested in contacting us! Please fill out the form below to get in touch.</p>
+
+<form action="" method="post">
+  <label for="name">Name:</label><br>
+  <input type="text" id="name" name="name" required><br><br>
+  <label for="email">Email:</label><br>
+  <input type="email" id="email" name="email" required><br><br>
+  <label for="message">Message:</label><br>
+  <textarea id="message" name="message" rows="4" cols="50" required></textarea><br><br>
+  <input type="submit" value="Submit">
+</form>
+
+<h2>Explore Further</h2>
+<ul>
+  <li><a href="/">Home</a></li>
+  <li><a href="/about">About Us</a></li>
+  <li><a href="/data">Data Exploration</a></li>
+  <li><a href="/contact">Contact</a></li>
+</ul>
+
+<svg width="100" height="100">
+  <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="none" />
+</svg>
+
+<script src="/script.js"></script></body></html>
