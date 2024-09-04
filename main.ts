@@ -36,7 +36,7 @@ if (import.meta.main) {
         cached = await Deno.readTextFile(cachedFile);
       }
     } catch (e) {
-      console.error(e);
+      // console.error(e + ' ');
     }
     let reqDescription = await stringifyRequest(req)
     console.log(reqDescription);

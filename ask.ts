@@ -2,7 +2,9 @@ import { Ollama } from 'npm:ollama';
 
 const ollama = new Ollama({ host: '192.168.0.7' });
 // const model = 'mistral-nemo:12b-instruct-2407-q8_0';
-const model = 'llama3.1:i';
+// const model = 'llama3.1:70b';
+// const model = 'openchat';
+const model = 'gemma2';
 
 export interface HistoryItem {
     req: string;

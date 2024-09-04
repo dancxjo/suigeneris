@@ -26,7 +26,6 @@ services:
       - ./main.ts:/app/main.ts
       - ./ask.ts:/app/ask.ts
       - ./static:/app/static/
-      - ./facts.txt:/app/facts.txt
       - ./thoughts.txt:/app/thoughts.txt
     working_dir: /app
     command: ["run", "--allow-net", "--allow-write", "--allow-read", "main.ts"]

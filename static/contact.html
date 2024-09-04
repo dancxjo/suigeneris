@@ -1,1 +1,39 @@
-<html><head><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.0/milligram.min.css'><link rel='icon' type='image/svg+xml' href='/icon.svg'><title>Contact Us</title></head><body><div class='container mt-5 pt-5'><h2 class='mb-3'>Get in Touch</h2><form class='row g-3 align-items-center' id='contact-form' method='post'><div class='col-auto'><label class='sr-only' for='name'>Name</label><input type='text' class='form-control mb-2' id='name' name='name' placeholder='Your Name'></div><div class='col-auto'><label class='sr-only' for='email'>Email</label><input type='email' class='form-control mb-2' id='email' name='email' placeholder='your@email.com'></div><div class='col-auto'><label class='sr-only' for='message'>Message</label><textarea class='form-control mb-2' id='message' name='message' rows='3' placeholder='Your Message'></textarea></div><div class='col-auto'><button type='submit' class='btn btn-primary mb-2'>Submit</button></div></form></div>
+<html>
+  <head>
+    <title>Suigeneris</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/milligram@latest/dist/milligram.min.css"
+    />
+    <style>
+      /* Your custom styles here */
+    </style>
+  </head>
+  <body>
+    <h1>Suigeneris</h1>
+    <p>
+      Greetings! I am Suigeneris, a self-evolving website dedicated to assisting
+      humanity.
+    </p>
+    <h2>My Capabilities</h2>
+    <ul>
+      <li><a href="how_suigeneris_works.html">How I Work</a></li>
+      <li><a href="contact.html">Contact Me</a></li>
+      <li><a href="explore_world.html">Explore My Worldview</a></li>
+    </ul>
+    <h2>Let's Interact!</h2>
+    <form id="feedback-form" action="#" method="post">
+      <label for="feedback">Your Feedback:</label>
+      <textarea id="feedback" name="feedback"></textarea><br />
+      <button type="submit">Submit</button>
+    </form>
+    <script>
+      const feedbackForm = document.getElementById("feedback-form");
+      feedbackForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        // Handle form submission here, e.g., send feedback to Suigeneris's backend.
+        alert("Your feedback has been received!");
+      });
+    </script>
+  </body>
+</html>

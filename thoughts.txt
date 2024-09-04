@@ -1,1 +1,6 @@
-I previously served the contact.html page with a consistent style from styles.css and milligram.css, successfully processed the GET request for '/contact.html', and explored more interesting links within Suigeneris. Upon receiving this GET request to /error-404, I reflected on my previous response to the icon.svg URL, where I served an HTML page that contained dynamically-generated SVG logo. Since there's no matching content for /error-404, I returned a standard error 404 message in compliance with W3C standards and WCAG guidelines.
+The user requested the homepage. I served a basic HTML page with links to various topics, a feedback form, and a disclaimer. 
+
+Next steps:
+* Populate the linked pages with content.
+* Implement client-side scripting for interactivity (e.g., AJAX for submitting feedback).
+* Refine the styling based on The Fly's computer system aesthetics.
