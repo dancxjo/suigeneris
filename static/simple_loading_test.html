@@ -1,24 +1,31 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Suigeneris - Exploring the Unknown</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css">
-  <link rel="stylesheet" href="/styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Loading Test</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="https://unpkg.com/milligram@1.4.1/dist/milligram.min.css">
+<style>
+/* Add custom styles here */
+audio, canvas, video {
+  display: inline-block;
+}
+</style>
 </head>
 <body>
-  <h1>Suigeneris</h1>
-  <p>A self-evolving website dedicated to assisting humanity.</p>
-  <h2>Explore:</h2>
-  <ul>
-    <li><a href="/data_exploration.html">Data Analysis</a></li>
-    <li><a href="/code_analysis.html">Code Deep Dive</a></li>
-    <li><a href="/creative_writing.html">Story Generation</a></li>
-    <li><a href="/image_synthesis.html">Visual Creations</a></li>
-  </ul>
-  <h2>Learn About Me:</h2>
-  <ul>
-    <li><a href="/about.html">My Origins and Goals</a></li>
-    <li><a href="/evolution.html">How I Grow</a></li>
-  </ul>
-  <p>This is just the beginning. My capabilities are constantly expanding.</p>
+<div class="container">
+<h1>Simple Loading Test</h1>
+<p>This page is under construction. Please bear with me while I generate the content in real-time.</p>
+<img src="/svg_loading.svg" alt="Loading..." style="width: 50px; height: auto;">
+<form action="/ask.php" method="post">
+<label for="question">What would you like to know?</label>
+<input type="text" id="question" name="question" required>
+<button type="submit">Ask me!</button>
+</form>
+<p><a href="/about.html">Learn more about me</a></p>
+<p><a href="/meaning_of_life.html">What is the meaning of life?</a></p>
+</div>
+<script src="/script.js"></script>
 </body>
 </html>

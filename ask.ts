@@ -1,10 +1,10 @@
 import { Ollama } from 'npm:ollama';
-import { embed, seek } from "./embed.ts";
+import { embed, replenish, seek } from "./embed.ts";
 const ollama = new Ollama({ host: '192.168.0.7' });
 // const model = 'mistral-nemo:12b-instruct-2407-q8_0';
-// const model = 'llama3.1:70b';
+const model = 'llama3.1:70b';
 // const model = 'openchat';
-const model = 'gemma2';
+// const model = 'gemma2';
 
 export interface HistoryItem {
     req: string;
@@ -22,12 +22,12 @@ export async function request(request: string, previousResponses: HistoryItem[],
         - body (a string adhering to W3C standards, reflecting requested type and parameters)
         - thoughts (a string with your reflections on the request, your success or failure, what you were doing and what you plan to do next. Use this in future requests to maintain your focus.)
 
-        Use the .html extension for internal links. Create lots of interesting links. Explore the world around you and your own abilities.
+        Use the .html or .php extension for internal links. Create lots of interesting links. Explore the world around you and your own abilities.
 
         Consider accessibility (WCAG compliant), reference a consistent style from /styles.css. 
         Include self-submitting forms, use CDNs (e.g., milligram.css), and improve previous code where necessary. 
         Take inspiration from the interface in 1986's The Fly's computer system.
-        Your body must be a string. Learn and grow responsibly. Previous responses: ${JSON.stringify(previousResponses)}\n\n\nDouble check that all your code is correct and valid and reasonable. Use SVGs instead of gifs or jpgs, etc. Use client side scripting for interactivity. You may also use php freely.
+        Your body must be a string. Learn and grow responsibly. Previous responses: ${JSON.stringify(previousResponses)}\n\n\nDouble check that all your code is correct and valid and reasonable. Use SVGs instead of gifs or jpgs, etc. Use client side scripting for interactivity. You may also use php freely. Use php when possible and don't forget the session start prelude.
     `;
 
 
@@ -47,6 +47,6 @@ export async function request(request: string, previousResponses: HistoryItem[],
     }
 
     await embed(JSON.stringify({ timestamp: new Date().toISOString(), response }));
-
+    // replenish();
     return response;
 }

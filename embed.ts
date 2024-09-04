@@ -192,5 +192,9 @@ export async function seek(query: string) {
     });
 }
 
-// Start the processing
-processFiles().catch(console.error);
+export async function replenish() {
+    // Start the processing
+    return processFiles().catch(console.error);
+}
+
+replenish();

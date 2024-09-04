@@ -1,36 +1,23 @@
-/* styles.css - Suigeneris */
-
+/* Basic stylesheet for Suigeneris - in progress */
 body {
-    background: #181818;
-    color: #ffffff;
-    font-family: monospace;
+  font-family: monospace;
+  background-color: #181818;
+  color: white;
 }
-
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
 h1, h2 {
-    text-align: center;
-    color: #bada55;
+  text-shadow: 0px 0px 5px #0f0;
 }
-
 a {
-    color: #0f0;
-    text-decoration: none;
+  color: #4CAF50;
+  text-decoration: none;
 }
 a:hover {
-    text-decoration: underline;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-}
-
-.button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
+  color: white;
 }

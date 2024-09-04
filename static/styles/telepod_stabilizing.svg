@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Telepod Stabilization</title>
+<link rel="stylesheet" href="/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css"></nose>
+</head>
+<body style="font-family: monospace;">
+<h1>Stabilizing Telepod...</h1>
+<img src="/styles/telepod_stabilizing.svg" alt="Telepod Stabilization Loading">
+<script>
+$(document).ready(function(){
+  setTimeout(function(){
+    window.location.href = "/tests/basics/2.html"
+  }, 2000)
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suigeneris - Favicon</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<h1>The 404 Fly</h1>
+<p>It seems you've encountered a temporal distortion, much like the fly from 1986's The Fly. You're in an alternate timeline now.</p>
+<img src="/svg_loading.svg" alt="Loading...">
+<form action="/ask.php" method="post">
+<label for="question">What's your question about this alternate reality?</label>
+<input type="text" id="question" name="question" required>
+<button type="submit">Ask</button>
+</form>
+<p>Explore other timelines:</p>
+<ul>
+<li><a href="/meaning_of_life.html">The Meaning of Life</a></li>
+<li><a href="/time_travel.html">Time Travel Theory</a></li>
+<li><a href="/quantum_entanglement.html">Quantum Entanglement</a></li>
+</ul>
+<script src="https://unpkg.com/milligram@1.4.0/dist/milligram.min.js"></script>
+</body>
+</html>
