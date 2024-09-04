@@ -1,21 +1,3 @@
-.mg-btn, .mg-btn:hover, .mg-btn:active {
-  transition: background-color 0.3s ease;
-}
-
-.mg-input, .mg-label, .mg-select {
-  font-size: 1rem;
-}
-
-/* TO DO: Add more specific styles for form elements as needed */
-
-/**************
- * RESPONSIVE STYLES
- **************/
-@media (max-width: 640px) {
-  body {
-    font-size: 18px;
-  }
-  .mg-btn, .mg-input, .mg-label, .mg-select {
-    font-size: 0.9rem;
-  }
+body {
+  
 }

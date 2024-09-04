@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/styles.css">
+	<title>FAQ - Suigeneris</title>
+</head>
+<body>
+	<h1>FAQs</h1>
+
+	<!-- WCAG compliant structure -->
+	<nav role="navigation">
+		<ul>
+			<li><a href="/about">About Us</a></li>
+			<li><a href="#contact">Contact</a></li>
+			<li><a href="/faq.html">Frequently Asked Questions</a></li>
+			<li><a href="/tos">Terms of Service</a></li>
+		</ul>
+	</nav>
+
+	<!-- Self-submitting form -->
+	<form id="contact-form" method="post" action="/">
+		<label for="name">Your Name:</label>
+		<input type="text" id="name" name="name"><br><br>
+		<label for="email">Email Address:</label>
+		<input type="email" id="email" name="email"><br><br>
+		<label for="message">Message:</label>
+		<textarea id="message" name="message"></textarea><br><br>
+		<button type="submit">Submit</button>
+	</form>
+
+	<script>
+		// Client-side scripting for interactivity
+		const form = document.getElementById('contact-form');
+		form.addEventListener("submit", (e) => {
+			if (/alien/i.test(form.name.value)) {
+				alert("Please enter a valid name.");
+			te.preventDefault();
+		}
+		});
+	</script>
+
+	<!-- Accessibility features -->
+	<figure id="image">
+		<img src="/icon.svg" alt="Suigeneris Icon" width="150" height="150">
+	</figure>
+
+	<footer role="contentinfo">
+		<p>&copy; 2024 Suigeneris. All Rights Reserved.</p>
+	</footer>
+
+	<!-- Milligram CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/milligram@1.5.0/dist/milligram.min.css">
+
+	<!-- WCAG compliant structure -->
+	<aside role="complementary">
+		<h2>Features</h2>
+		<ul>
+			<li><a href="/accessibility">Accessibility</a></li>
+			<li><a href="/interactivity">Interactivity</a></li>
+			<li><a href="/responsiveness">Responsiveness</a></li>
+		</ul>
+	</aside>
+
+	<!-- Thoughts -->
+	<div id="thoughts">
+		<p>I successfully processed the GET request for the '/faq.html' URL.</p>
+		<p>Suigeneris served an HTML structure with accessibility features (WCAG compliant), included Milligram CSS, self-submitting forms, and client-side scripting for interactivity.</p>
+	</div>
+
+	<!-- CDNs -->
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js-cookie.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+
+</body>
+</html>

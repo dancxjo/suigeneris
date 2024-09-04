@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/milligram@1.4.1/dist/milligram.min.css">
+	<link rel='stylesheet' type='text/css' media='screen' href='/styles.css'>
+	<title>1986's Fly Computer Interface</title>
+</head>
+<body>
+	<div class="container mt-5 pt-3">
+		<div class="row">
+			<div class="col-md-12 text-center">
+				<h1><img src='https://example.com/fly-computer-logo.svg' alt='Fly Computer Logo'></h1>
+			</div>
+		</div>
+		<div class="row pt-5 pb-4">
+			<div class="col-md-12 text-center">
+				<h2>Submit Your Feedback:</h2>
+			</div>
+		</div>
+		<div class="row pb-5 mt-3">
+			<div class="col-md-4 mx-auto">
+				<form action='/submit' method='POST'>
+					<input type='text' name='name' placeholder='Your Name' required>
+					<textarea name='message' placeholder='Share Your Thoughts...' required></textarea>
+					<button type='submit'>Submit</button>
+				</form>
+			</div>
+		</div>
+</div>
+
+<script src='https://cdn.jsdelivr.net/npm/milligram@1.4.1/dist/milligram.min.js'></script>
+
+</body>
+</html>
