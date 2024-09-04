@@ -1,11 +1,20 @@
 import { Ollama } from 'npm:ollama';
-import { embed, replenish, seek } from "./embed.ts";
+import { seek } from "./embed.ts";
 const ollama = new Ollama({ host: '192.168.0.7' });
 // const model = 'mistral-nemo:12b-instruct-2407-q8_0';
 // const model = 'llama3.1';
 // const model = 'openchat';
-const model = 'gemma2';
 // const model = 'mistral-nemo'
+export let model = 'llava:13b';
+
+export async function listModels() {
+    return await ollama.list();
+}
+
+export async function setModel(newModel: string) {
+    model = newModel;
+    await ollama.pull({ model });
+}
 
 export async function request(request: string, cachedVersion: string, onChunk: (chunk: string) => void = () => { }) {
     await ollama.pull({ model });
@@ -27,7 +36,7 @@ export async function request(request: string, cachedVersion: string, onChunk: (
     - Use SVGs for images where possible.
     - Look for ways to improve previously cached versions.
     - Ensure all code is valid, correct, and reasonable.
-    - In a footer of all HTML responses, insert an unobtrusive, self-submitting form that appends a query parameter to the URL. The user will use this to communicate with you directly to guide your growth.
+    - In a footer of all HTML responses, insert an unobtrusive, self-submitting form containing one single line text field that appends a query parameter to the URL. The user will use this to communicate with you directly to guide your growth.
 
     Double-check your output and learn and grow responsibly. You must return only a JSON object with the above keys. Be creative and thoughtful in your responses.
 `;
@@ -36,7 +45,7 @@ export async function request(request: string, cachedVersion: string, onChunk: (
     const prompt = `${general}\n\nThis context from your own source code may help you: ${JSON.stringify(search)}`;
     console.log({ prompt });
     const stream = await ollama.generate({
-        model, prompt, stream: true, format: 'json'
+        model, prompt, stream: true, format: 'json', options: { temperature: 0.5 }
     });
 
     let response = '';

@@ -11,7 +11,7 @@ const model = 'mxbai-embed-large';
 const client = new QdrantClient({ url: 'http://qdrant:6333' });
 
 // Define the maximum chunk size (in characters)
-const maxChunkSize = 256;
+const maxChunkSize = Math.floor(65535 / 2 / 2);
 
 let globalIndex = 1; // Global counter for unique integer IDs
 
@@ -21,8 +21,7 @@ async function processFiles(directoryPath = '.') {
         if (entry.isFile) {
             console.log(`Processing file: ${entry.name}`);
             await processFile(`${directoryPath}/${entry.name}`);
-        }
-        if (entry.isDirectory) {
+        } else if (entry.isDirectory) {
             console.log(`Processing directory: ${entry.name}`);
             await processFiles(`${directoryPath}/${entry.name}`);
         }
@@ -31,6 +30,11 @@ async function processFiles(directoryPath = '.') {
 
 // Function to process a single file using the Streams API
 async function processFile(filePath: string) {
+    const fileInfo = await Deno.stat(filePath);
+    if (fileInfo.isDirectory) {
+        console.error(`Error: ${filePath} is a directory, not a file.`);
+        return; // Exit early if it's a directory
+    }
     let fileStream;
     try {
         fileStream = await Deno.open(filePath, { read: true });
@@ -44,17 +48,18 @@ async function processFile(filePath: string) {
             const { done, value } = await reader.read();
             if (done) {
                 if (chunkBuffer.length > 0) {
-                    await embed(chunkBuffer, filePath, ++chunkIndex);
+                    await embed(chunkBuffer, filePath, ++chunkIndex); // Process any leftover buffer
                 }
                 break;
             }
 
             chunkBuffer += decoder.decode(value, { stream: true });
 
+            // Process full chunks
             while (chunkBuffer.length >= maxChunkSize) {
                 const chunk = chunkBuffer.slice(0, maxChunkSize);
                 await embed(chunk, filePath, ++chunkIndex);
-                chunkBuffer = chunkBuffer.slice(maxChunkSize);
+                chunkBuffer = chunkBuffer.slice(maxChunkSize); // Remove the processed chunk
             }
         }
     } catch (error) {
@@ -65,7 +70,7 @@ async function processFile(filePath: string) {
                 fileStream.close();
             }
         } catch (closeError) {
-            // console.error('Error closing file:', closeError);
+            console.error('Error closing file:', closeError);
         }
     }
 }
@@ -100,19 +105,16 @@ export async function embed(chunk: string, filePath: string, chunkIndex: number)
 async function ensureCollectionExists(collectionName: string, vectorSize: number) {
     try {
         await client.getCollection(collectionName);
-        // console.log(`Collection '${collectionName}' already exists.`);
     } catch (error) {
         if (error?.status === 404) {
-            // Create the collection if it does not exist
             await client.createCollection(collectionName, {
                 vectors: {
-                    size: vectorSize, // Set the vector size based on the embedding size
-                    distance: 'Cosine', // Choose a distance metric like Cosine, Euclidean, etc.
+                    size: vectorSize,
+                    distance: 'Cosine',
                 },
             });
-            // console.log(`Created collection '${collectionName}' in Qdrant.`);
         } else {
-            throw error; // If it's another error, rethrow it
+            throw error;
         }
     }
 }
@@ -120,12 +122,12 @@ async function ensureCollectionExists(collectionName: string, vectorSize: number
 // Helper function to store embeddings in Qdrant
 async function storeEmbeddingsInQdrant(collectionName: string, embeddings: number[][], filePath: string, chunkIndex: number, linkToRawDoc: string) {
     const points = embeddings.map((vector) => ({
-        id: globalIndex++, // Use a global incrementing integer for IDs
+        id: globalIndex++,
         vector: vector,
         payload: {
-            file_path: filePath, // Store the file path
-            chunk_index: chunkIndex, // Store the chunk index
-            link: decodeURIComponent(linkToRawDoc), // Store the link to the raw document
+            file_path: filePath,
+            chunk_index: chunkIndex,
+            link: decodeURIComponent(linkToRawDoc),
             created_at: new Date().toISOString(),
         },
     }));
@@ -145,14 +147,23 @@ async function searchEmbeddings(queryVector: number[], limit = 50) {
         });
 
         console.log(`Found ${searchResults.length} similar embeddings:`);
-        return searchResults.map((result, index) => {
-            console.log(`Result ${index + 1}:`);
-            console.log(`ID: ${result.id}`);
-            console.log(`Score: ${result.score}`);
-            console.log(`Payload: ${JSON.stringify(result.payload)}`);
-            console.log('---');
-            return result.payload;
-        })//.filter((result) => !!result && 'error'! in result); // Filter out low-scoring results
+        return searchResults.map((result) => {
+            try {
+                const filePath = decodeURIComponent(result?.payload?.file_path as string ?? '');
+                const chunkIndex = result?.payload?.chunk_index as number;
+
+                // Read the specific chunk from the original file
+                const data = Deno.readTextFileSync(filePath);
+                const chunks = data.match(new RegExp(`.{1,${maxChunkSize}}`, 'g')) || [];
+                const chunk = chunks[chunkIndex - 1];  // Get the appropriate chunk by index
+
+                console.log(`- ${filePath} (chunk ${chunkIndex})`);
+
+                return { ...result, chunk }; // Return only the chunk
+            } catch (error) {
+                return { error: error?.message ?? error };
+            }
+        });
     } catch (error) {
         console.error('Error searching embeddings:', error);
     }
@@ -160,10 +171,8 @@ async function searchEmbeddings(queryVector: number[], limit = 50) {
 
 // Function to seek similar chunks based on a query string
 export async function seek(query: string) {
-    // Pull the model if it's not already available locally
     await ollama.pull({ model });
 
-    // Generate embeddings for the query
     const response = await ollama.embed({
         model,
         input: query,
@@ -171,17 +180,13 @@ export async function seek(query: string) {
 
     const queryVector = response.embeddings[0];
 
-    // Search for similar embeddings in Qdrant
     const results = await searchEmbeddings(queryVector);
     return results?.map((result: any) => {
         try {
             const { file_path, chunk_index, link } = result;
-
-            // Read the specific chunk from the original file
             const data = Deno.readTextFileSync(file_path);
             const chunks = data.match(new RegExp(`.{1,${maxChunkSize}}`, 'g')) || [];
             const chunk = chunks[chunk_index - 1];
-
             return { ...result, data: chunk, link };
         } catch (error) {
             return { ...result, error: error?.message ?? error };
@@ -190,7 +195,6 @@ export async function seek(query: string) {
 }
 
 export async function replenish() {
-    // Start the processing
     return processFiles().catch(console.error);
 }
 

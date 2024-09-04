@@ -1,4 +1,4 @@
-import { HistoryItem, request } from "./ask.ts";
+import { request } from "./ask.ts";
 import { mkdirp } from "npm:mkdirp";
 import { dirname } from "https://deno.land/std@0.224.0/path/mod.ts";
 import { existsSync } from "https://deno.land/std@0.224.0/fs/exists.ts";
@@ -20,8 +20,8 @@ function resolveCachedFilePath(url: URL): { path: string, cachedFile: string } {
   const isDir = existsSync(cachedFile, { isDirectory: true });
 
   if (isDir) {
-    path += "/index.php";
-    cachedFile += "/index.php";
+    path += "/index.html";
+    cachedFile += "/index.html";
   }
   return { path, cachedFile };
 }
@@ -39,13 +39,11 @@ async function getCachedContent(cachedFile: string): Promise<string> {
 }
 
 // Main handler for incoming requests
-async function handleRequest(req: Request, previousResponses: HistoryItem[]): Promise<Response> {
+async function handleRequest(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const { path, cachedFile } = resolveCachedFilePath(url);
 
-  // let cachedContent = await getCachedContent(cachedFile);
-  let statusCode = 200;
-  let headers = {};
+  const cachedContent = await getCachedContent(cachedFile);
   // let code = cachedContent;
 
   // If no cached content, generate a response from the AI model
@@ -55,7 +53,7 @@ async function handleRequest(req: Request, previousResponses: HistoryItem[]): Pr
   const fullRequestDescription = `${reqDescription} (you previously thought: ${thoughts})`;
 
   // Generate new response from the model
-  const r = await demandResponse(fullRequestDescription, previousResponses, cachedFile, path);
+  const r = await composeFile(fullRequestDescription, cachedFile, path);
   // }
 
   return new Response(r.body, {
@@ -65,8 +63,8 @@ async function handleRequest(req: Request, previousResponses: HistoryItem[]): Pr
 }
 
 // Demand a response from the AI model
-async function demandResponse(prompt: string, previousResponses: HistoryItem[], cachedFile: string, path: string): Promise<Partial<{ statusCode: number, headers: any, body: string, thoughts: string }>> {
-  const response = await request(prompt, previousResponses);
+async function composeFile(prompt: string, cachedFile: string, path: string): Promise<Partial<{ statusCode: number, headers: any, body: string, thoughts: string }>> {
+  const response = await request(prompt, cachedFile);
 
   try {
     const parsed = JSON.parse(response);
@@ -96,10 +94,5 @@ async function cacheResponse(body: string, thoughts: string, path: string, cache
 
 // Entry point for the application
 if (import.meta.main) {
-  const listener = Deno.listen({ port: 9090 });
-  const previousResponses: HistoryItem[] = [];
-
-  Deno.serve(async (req) => await handleRequest(req, previousResponses));
-
-  listener.close();
+  Deno.serve({ port: 9090 }, async (req) => await handleRequest(req));
 }
