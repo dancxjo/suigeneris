@@ -14,7 +14,7 @@ const client = new QdrantClient({ url: 'http://qdrant:6333' });
 const directoryPath = '.';
 
 // Define the maximum chunk size (in characters)
-const maxChunkSize = 1000; // For example, 1000 characters per chunk
+const maxChunkSize = 2048; // For example, 1000 characters per chunk
 
 let globalIndex = 1; // Global counter for unique integer IDs
 
@@ -68,13 +68,13 @@ async function processFile(filePath: string) {
                 fileStream.close();
             }
         } catch (closeError) {
-            console.error('Error closing file:', closeError);
+            // console.error('Error closing file:', closeError);
         }
     }
 }
 
 // Function to embed a chunk and store it in Qdrant with a link back to the raw document
-export async function embed(chunk: string, filePath: string = 'unknown', chunkIndex: number = 0) {
+export async function embed(chunk: string, filePath: string, chunkIndex: number) {
     // Pull the model if it's not already available locally
     await ollama.pull({ model });
 
@@ -138,7 +138,7 @@ async function storeEmbeddingsInQdrant(collectionName: string, embeddings: numbe
 }
 
 // Function to search for similar embeddings in Qdrant
-async function searchEmbeddings(queryVector: number[], limit = 5) {
+async function searchEmbeddings(queryVector: number[], limit = 50) {
     const collectionName = 'code_chunks';
 
     try {
@@ -155,7 +155,7 @@ async function searchEmbeddings(queryVector: number[], limit = 5) {
             console.log(`Payload: ${JSON.stringify(result.payload)}`);
             console.log('---');
             return result.payload;
-        });
+        })//.filter((result) => !!result && 'error'! in result); // Filter out low-scoring results
     } catch (error) {
         console.error('Error searching embeddings:', error);
     }

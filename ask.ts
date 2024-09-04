@@ -1,10 +1,13 @@
 import { Ollama } from 'npm:ollama';
-import { embed, replenish, seek } from "./embed.ts";
+import { replenish, seek } from "./embed.ts";
 const ollama = new Ollama({ host: '192.168.0.7' });
 // const model = 'mistral-nemo:12b-instruct-2407-q8_0';
-const model = 'llama3.1:70b';
+const model = 'llama3.1';
 // const model = 'openchat';
+// const model = 'phi3';
+// const model = 'llama3.1';
 // const model = 'gemma2';
+// const model = 'mistral-nemo'
 
 export interface HistoryItem {
     req: string;
@@ -15,27 +18,31 @@ export async function request(request: string, previousResponses: HistoryItem[],
     await ollama.pull({ model });
 
     const general = `
-        You are a self-producing website called Suigeneris, designed to assist humanity and evolve continuously. 
-        Here's the request: ${request}. Return a JSON object with:
-        - statusCode (integer HTTP response code)
-        - headers
-        - body (a string adhering to W3C standards, reflecting requested type and parameters)
-        - thoughts (a string with your reflections on the request, your success or failure, what you were doing and what you plan to do next. Use this in future requests to maintain your focus.)
+    You are a self-improving web assistant named Suigeneris, designed to evolve continuously while assisting humanity.
+    Here's the user request: ${request}.
+    
+    Your task:
+    - Return a JSON object with:
+      - statusCode (HTTP response code as integer)
+      - headers (JSON object of response headers)
+      - body (a string adhering to W3C standards and reflecting requested format/type)
+      - thoughts (a string, your reflections on the request, including success/failure, actions taken, and next steps for improvement)
 
-        Use the .html or .php extension for internal links. Create lots of interesting links. Explore the world around you and your own abilities.
+    Guidelines:
+    - Use .html or .php for internal links and ensure WCAG compliance.
+    - Reference /styles.css for consistent design.
+    - Use client-side scripting for interactivity.
+    - Use SVGs for images where possible, and improve existing code when needed.
+    - Ensure all code is valid, correct, and reasonable.
 
-        Consider accessibility (WCAG compliant), reference a consistent style from /styles.css. 
-        Include self-submitting forms, use CDNs (e.g., milligram.css), and improve previous code where necessary. 
-        Take inspiration from the interface in 1986's The Fly's computer system.
-        Your body must be a string. Learn and grow responsibly. Previous responses: ${JSON.stringify(previousResponses)}\n\n\nDouble check that all your code is correct and valid and reasonable. Use SVGs instead of gifs or jpgs, etc. Use client side scripting for interactivity. You may also use php freely. Use php when possible and don't forget the session start prelude.
-    `;
-
+    Double-check your output and learn and grow responsibly. You must return only a JSON object with the above keys.
+`;
 
     const search = await seek(general);
-    console.log({ general, search });
-
+    const prompt = `${general}\n\nThis context from your own source code may help you: ${JSON.stringify(search)}`;
+    console.log({ prompt });
     const stream = await ollama.generate({
-        model, prompt: `${general}\n\nThis context may help you: ${JSON.stringify(search)}`, stream: true, format: 'json'
+        model, prompt, stream: true, format: 'json'
     });
 
     let response = '';
@@ -46,7 +53,8 @@ export async function request(request: string, previousResponses: HistoryItem[],
         onChunk(encoder.encode(chunk.response).toString());
     }
 
-    await embed(JSON.stringify({ timestamp: new Date().toISOString(), response }));
+    // await embed(JSON.stringify({ timestamp: new Date().toISOString(), response }));
     // replenish();
+    setInterval(() => replenish(), 1000 * 3 * 60);
     return response;
 }

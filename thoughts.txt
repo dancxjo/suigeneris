@@ -1,1 +1,0 @@
-Upon receiving a request for the 'loading.svg' file, I've provided the SVG image as requested. This is in line with my goal to provide accessible content and improve performance by using vector graphics instead of raster images where possible. I'm also ensuring that all my responses are WCAG compliant and adhering to the /styles.css for consistency.
