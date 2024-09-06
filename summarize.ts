@@ -1,9 +1,9 @@
 import { Node, ScriptTarget, SyntaxKind, createSourceFile, SourceFile } from "npm:typescript";
 import { model, ollama } from "./ollama_client.ts";
 import { TerminalSpinner } from "https://deno.land/x/spinners/mod.ts";
+import { MultiProgressBar } from "@deno-library/progress";
 
-
-const threshold = 128;
+const threshold = 256;
 
 export interface NodeDescriptor {
     node: Node;
@@ -35,16 +35,13 @@ function extractNodeSummary(node: Node): string {
 
 // Function to summarize a node
 async function summarizeNode(asString: string): Promise<string> {
-    const prompt = `This is a node in an AST for a Typescript script: ${asString}. Explain what the node does in relation to the entire program. Respond only with a string to place inline with the text of the code. Describe the code in terms of what it does in the program, not in terms of the code itself. For example, "Handles click events on the User Submission button." Do not say "This node represents..." or such terminology. Be concise and clear and don't reference the AST directly, only the code lying beneath it. If it is just a token or other such trivial item, simply return the text of the node itself.`;
+    const prompt = `This is a node in an AST for a Typescript script: ${asString}. Explain what the node does in relation to the entire program. Respond only with a string to place inline with the text of the code. Describe the code in terms of what it does in the program, not in terms of the code itself. For example, "Handles click events on the User Submission button." Do not say "This node represents..." or such terminology. Be concise and clear and don't reference the AST directly, only the code lying beneath it. If it is just a token or other such trivial item, simply return the text of the node itself.\n\n`;
     const response = await ollama.generate({
         model,
         prompt,
         options: { temperature: 1 },
     });
-
-    // console.log(response.response);
-    Deno.stdout.write(new TextEncoder().encode('.'));
-    return response.response;
+    return response.response.replace(/^"|"\.?$/g, ''); // A strange glitch in the API response
 }
 
 function requiresSummary(node: Node): boolean {
@@ -66,10 +63,10 @@ async function summarizeUp(node: Node): Promise<NodeDescriptor[]> {
     const childSummaries = descriptors.map((descriptor) => descriptor.summary).join(" ");
     const asString = childSummaries.length > 0 ? `${SyntaxKind[node.kind]}: ${childSummaries}` : extractNodeSummary(node);
     if (requiresSummary(node)) {
-        const terminalSpinner = new TerminalSpinner(`${SyntaxKind[node.kind]}...`);
+        const terminalSpinner = new TerminalSpinner(`up ${SyntaxKind[node.kind]}...`);
         terminalSpinner.start();
         const summary = await summarizeNode(asString);
-        const result = `// ${SyntaxKind[node.kind]}: ${summary}`
+        const result = `${SyntaxKind[node.kind]}: ${summary}`
         terminalSpinner.succeed(result)
         descriptors.push({ node, summary: result });
     } else {
@@ -81,19 +78,24 @@ async function summarizeUp(node: Node): Promise<NodeDescriptor[]> {
 
 export async function describeNodesInScript(filePath: string): Promise<NodeDescriptor[]> {
     const tree = await generateASTFromScript(filePath);
-    const nodes: NodeDescriptor[] = await summarizeUp(tree);
-    return nodes;
+    const upNodes = await summarizeUp(tree);
+    const downNodes = await summarizeDown(upNodes.find((d) => !d.node.parent)!);
+    return [...upNodes, ...downNodes];
 }
 
 export async function summarizeDown(summarizedNode: NodeDescriptor): Promise<NodeDescriptor[]> {
     const descriptors: NodeDescriptor[] = [];
     const summary = summarizedNode.summary;
-    if (summary.startsWith('//')) {
+    if (requiresSummary(summarizedNode.node)) {
+        const terminalSpinner = new TerminalSpinner(`down ${SyntaxKind[summarizedNode.node.kind]}...`);
+        terminalSpinner.start();
+
         for (const child of summarizedNode.node.getChildren()) {
             const childSummary = await summarizeNode(`${SyntaxKind[child.kind]}: Context: ${summary}\n\n${extractNodeSummary(child)}`);
             const childNodes = await summarizeDown({ node: child, summary: childSummary });
             descriptors.push(...childNodes);
         }
+        terminalSpinner.succeed(`${SyntaxKind[summarizedNode.node.kind]}: ${summary}`);
     }
 
     return descriptors;
@@ -105,12 +107,8 @@ if (import.meta.main) {
 
     descriptors.sort((a, b) => a.node.pos - b.node.pos);
     for (const descriptor of descriptors) {
-        if (descriptor.summary.startsWith('//')) {
+        if (requiresSummary(descriptor.node)) {
             console.log(descriptor.summary);
         }
     }
-
-    const insights = await summarizeDown(descriptors.find((d) => !d.node.parent)!);
-    console.log(insights.map((i) => i.summary).join('\n'));
-
 }
