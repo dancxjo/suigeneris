@@ -20,7 +20,7 @@ async function processFiles(directoryPath = '.') {
     for await (const entry of Deno.readDir(directoryPath)) {
         if (entry.isFile) {
             console.log(`Processing file: ${entry.name}`);
-            await processFile(`${directoryPath}/${entry.name}`);
+            await embedFileInChunks(`${directoryPath}/${entry.name}`);
         } else if (entry.isDirectory) {
             console.log(`Processing directory: ${entry.name}`);
             await processFiles(`${directoryPath}/${entry.name}`);
@@ -29,7 +29,8 @@ async function processFiles(directoryPath = '.') {
 }
 
 // Function to process a single file using the Streams API
-async function processFile(filePath: string) {
+export async function embedFileInChunks(filePath: string) {
+    console.log(`Processing file: ${filePath}`);
     const fileInfo = await Deno.stat(filePath);
     if (fileInfo.isDirectory) {
         console.error(`Error: ${filePath} is a directory, not a file.`);
@@ -69,8 +70,8 @@ async function processFile(filePath: string) {
             if (fileStream) {
                 fileStream.close();
             }
-        } catch (closeError) {
-            console.error('Error closing file:', closeError);
+        } catch (_closeError) {
+            // console.error('Error closing file:', closeError);
         }
     }
 }

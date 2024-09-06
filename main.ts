@@ -2,6 +2,7 @@ import { request } from "./ask.ts";
 import { mkdirp } from "npm:mkdirp";
 import { dirname } from "https://deno.land/std@0.224.0/path/mod.ts";
 import { existsSync } from "https://deno.land/std@0.224.0/fs/exists.ts";
+import { embedFileInChunks } from "./embed.ts";
 
 // Convert request object to string
 async function stringifyRequest(req: Request): Promise<string> {
@@ -90,6 +91,8 @@ async function cacheResponse(body: string, thoughts: string, path: string, cache
   console.log(`Caching response for ${path}`);
   await Deno.writeTextFile(cachedFile, body);
   await Deno.writeTextFile('thoughts.txt', thoughts);
+  await embedFileInChunks(cachedFile);
+  await embedFileInChunks('thoughts.txt');
 }
 
 // Entry point for the application

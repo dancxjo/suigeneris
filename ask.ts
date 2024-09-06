@@ -32,6 +32,7 @@ export async function request(request: string, cachedVersion: string, onChunk: (
 
     Guidelines:
     - Always ensure that internal links point to a file name with a specific extension and ensure WCAG compliance.
+    - Use local relative links.
     - Reference /styles.css for consistent design. Base everything on milligram.css and good semantics.
     - Use SVGs for images where possible.
     - Look for ways to improve previously cached versions.
