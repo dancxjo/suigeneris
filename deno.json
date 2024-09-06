@@ -1,8 +1,10 @@
 {
   "tasks": {
-    "dev": "deno run --watch --allow-all main.ts"
+    "dev": "deno run --watch --allow-all src/main.ts",
+    "summarize": "deno run --watch --allow-net --allow-run --allow-write --allow-env --allow-read summarize.ts"
   },
   "imports": {
+    "@adaliszk/typescript": "jsr:@adaliszk/typescript@^5.4.4",
     "@std/assert": "jsr:@std/assert@1",
     "@std/os": "jsr:@std/os@1"
   }

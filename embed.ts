@@ -1,5 +1,7 @@
 import { Ollama } from 'npm:ollama';
+import "./ask.ts";
 import { QdrantClient } from 'npm:@qdrant/js-client-rest';
+import { describeNodesInScript } from "./summarize.ts";
 
 // Initialize Ollama with the appropriate host
 const ollama = new Ollama({ host: '192.168.0.7' });
@@ -11,16 +13,28 @@ const model = 'mxbai-embed-large';
 const client = new QdrantClient({ url: 'http://qdrant:6333' });
 
 // Define the maximum chunk size (in characters)
-const maxChunkSize = Math.floor(65535 / 2 / 2);
+const maxChunkSize = Math.floor(65535 / 2);
 
 let globalIndex = 1; // Global counter for unique integer IDs
 
 // Main function to scan, split, and embed files
 async function processFiles(directoryPath = '.') {
     for await (const entry of Deno.readDir(directoryPath)) {
+        if (entry.name.startsWith('.')) {
+            continue;
+        }
         if (entry.isFile) {
             console.log(`Processing file: ${entry.name}`);
-            await embedFileInChunks(`${directoryPath}/${entry.name}`);
+            const filePath = `${directoryPath}/${entry.name}`;
+            if (entry.name.endsWith('.ts') || entry.name.endsWith('.js')) {
+                const descriptors = await describeNodesInScript(filePath);
+                for (const descriptor of descriptors) {
+                    await embed(descriptor.summary, filePath, -1); // Process the entire summary as a single chunk
+                    await embed(descriptor.node.getText(), filePath, -1); // Process the entire node as a single chunk
+                }
+            } else {
+                await embedFileInChunks(filePath);
+            }
         } else if (entry.isDirectory) {
             console.log(`Processing directory: ${entry.name}`);
             await processFiles(`${directoryPath}/${entry.name}`);
@@ -31,49 +45,58 @@ async function processFiles(directoryPath = '.') {
 // Function to process a single file using the Streams API
 export async function embedFileInChunks(filePath: string) {
     console.log(`Processing file: ${filePath}`);
-    const fileInfo = await Deno.stat(filePath);
-    if (fileInfo.isDirectory) {
-        console.error(`Error: ${filePath} is a directory, not a file.`);
-        return; // Exit early if it's a directory
-    }
-    let fileStream;
     try {
-        fileStream = await Deno.open(filePath, { read: true });
-        const readableStream = fileStream.readable;
-        const reader = readableStream.getReader();
-        const decoder = new TextDecoder();
-        let chunkBuffer = '';
-        let chunkIndex = 0;
+        const fileInfo = await Deno.stat(filePath);
 
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) {
-                if (chunkBuffer.length > 0) {
-                    await embed(chunkBuffer, filePath, ++chunkIndex); // Process any leftover buffer
+        if (fileInfo.isDirectory) {
+            console.error(`Error: ${filePath} is a directory, not a file.`);
+            return; // Exit early if it's a directory
+        }
+        const content = await Deno.readTextFile(filePath);
+        await embed(content, filePath, -1); // Process the entire file as a single chunk
+        let fileStream;
+        try {
+            fileStream = await Deno.open(filePath, { read: true });
+            const readableStream = fileStream.readable;
+            const reader = readableStream.getReader();
+            const decoder = new TextDecoder();
+            let chunkBuffer = '';
+            let chunkIndex = 0;
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) {
+                    if (chunkBuffer.length > 0) {
+                        await embed(chunkBuffer, filePath, ++chunkIndex); // Process any leftover buffer
+                    }
+                    break;
                 }
-                break;
+
+                chunkBuffer += decoder.decode(value, { stream: true });
+
+                // Process full chunks
+                while (chunkBuffer.length >= maxChunkSize) {
+                    const chunk = chunkBuffer.slice(0, maxChunkSize);
+                    await embed(chunk, filePath, ++chunkIndex);
+                    chunkBuffer = chunkBuffer.slice(maxChunkSize); // Remove the processed chunk
+                }
             }
-
-            chunkBuffer += decoder.decode(value, { stream: true });
-
-            // Process full chunks
-            while (chunkBuffer.length >= maxChunkSize) {
-                const chunk = chunkBuffer.slice(0, maxChunkSize);
-                await embed(chunk, filePath, ++chunkIndex);
-                chunkBuffer = chunkBuffer.slice(maxChunkSize); // Remove the processed chunk
+        } catch (error) {
+            console.error('Error processing file:', error);
+        } finally {
+            try {
+                if (fileStream) {
+                    fileStream.close();
+                }
+            } catch (_closeError) {
+                // console.error('Error closing file:', closeError);
             }
         }
     } catch (error) {
-        console.error('Error processing file:', error);
-    } finally {
-        try {
-            if (fileStream) {
-                fileStream.close();
-            }
-        } catch (_closeError) {
-            // console.error('Error closing file:', closeError);
-        }
+        console.error(`Error: ${filePath} does not exist or is inaccessible.`);
+        return;
     }
+
 }
 
 // Function to embed a chunk and store it in Qdrant with a link back to the raw document
@@ -184,7 +207,9 @@ export async function seek(query: string) {
     const results = await searchEmbeddings(queryVector);
     return results?.map((result: any) => {
         try {
-            const { file_path, chunk_index, link } = result;
+            const payload = result?.payload;
+            const { file_path, chunk_index, link } = payload;
+            console.log(`- Extracting chunk ${file_path} (chunk ${chunk_index})`, { result });
             const data = Deno.readTextFileSync(file_path);
             const chunks = data.match(new RegExp(`.{1,${maxChunkSize}}`, 'g')) || [];
             const chunk = chunks[chunk_index - 1];

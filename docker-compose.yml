@@ -23,11 +23,7 @@ services:
     image: denoland/deno
     container_name: deno-fallback
     volumes:
-      - ./main.ts:/app/main.ts
-      - ./ask.ts:/app/ask.ts
-      - ./embed.ts:/app/embed.ts
-      - ./static:/app/static/
-      - ./thoughts.txt:/app/thoughts.txt
+      - ./:/app/
     working_dir: /app
     command: ["run", "--allow-net", "--allow-write", "--allow-read", "main.ts"]
     ports:

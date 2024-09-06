@@ -24,7 +24,7 @@ function resolveCachedFilePath(url: URL): { path: string, cachedFile: string } {
     path += "/index.html";
     cachedFile += "/index.html";
   }
-  return { path, cachedFile };
+  return { path: path.replace(/\/\//g, '/'), cachedFile: cachedFile.replace(/\/\//g, '/') };
 }
 
 // Retrieve cached content from the file system
